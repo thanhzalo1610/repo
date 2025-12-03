@@ -1,0 +1,23 @@
+services:
+  web:
+    image: legalintegrityanalytics:latest
+    container_name: legal-web-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+    volumes:
+      - ./Data:/app/Data
+      - ./wwwroot:/app/wwwroot
+      - ./secrets:/app/secrets
+    restart: unless-stopped
+    networks:
+      - legal-network
+
+networks:
+  legal-network:
+    driver: bridge
