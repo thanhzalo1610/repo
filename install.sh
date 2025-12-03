@@ -77,12 +77,24 @@ sudo ufw allow 80/tcp
 sudo ufw allow 443/tcp
 sudo ufw --force reload
 
-# 6. Create directories
-echo -e "${GREEN}[6/8] Tạo thư mục cần thiết...${NC}"
+# 6. Create directories and generate JWT keys
+echo -e "${GREEN}[6/8] Tạo thư mục và generate JWT keys...${NC}"
 mkdir -p Data
 mkdir -p secrets
 mkdir -p wwwroot
 mkdir -p nginx/ssl
+
+# Generate JWT RSA keys if not exist
+if [ ! -f "secrets/jwt_rsa_priv.pem" ]; then
+    echo -e "${YELLOW}Generating JWT RSA keys...${NC}"
+    openssl genrsa -out secrets/jwt_rsa_priv.pem 2048
+    openssl rsa -in secrets/jwt_rsa_priv.pem -pubout -out secrets/jwt_rsa_pub.pem
+    chmod 600 secrets/jwt_rsa_priv.pem
+    chmod 644 secrets/jwt_rsa_pub.pem
+    echo -e "${GREEN}✓ JWT keys generated${NC}"
+else
+    echo -e "${YELLOW}JWT keys already exist, skipping...${NC}"
+fi
 
 # 7. Get SSL certificate
 echo -e "${GREEN}[7/8] Lấy SSL certificate...${NC}"
