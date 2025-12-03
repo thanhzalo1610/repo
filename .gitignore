@@ -1,0 +1,72 @@
+# Sensitive data
+secrets/
+*.pem
+*.key
+
+# SSL certificates
+nginx/ssl/*.pem
+nginx/ssl/*.key
+
+# Database
+Data/
+*.db
+*.sqlite
+
+# Logs
+logs/
+*.log
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Docker volumes
+postgres-data/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa]rm/
+[Aa]rm64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache/options
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Backup files
+*.bak
+*.backup
+backups/
+
+# OS files
+.DS_Store
+Thumbs.db

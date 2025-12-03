@@ -1,15 +1,35 @@
 services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: legal-postgres
+    environment:
+      - POSTGRES_DB=MobileOasis_V1
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=Binh@123
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - legal-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   web:
     image: legalintegrityanalytics:latest
     container_name: legal-web-app
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "8080:80"
+    expose:
+      - "80"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_URLS=http://+:80
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=MobileOasis_V1;Username=postgres;Password=Binh@123;
+      - ConnectionStrings__LegalConnection=Host=postgres;Port=5432;Database=MobileOasis_V1;Username=postgres;Password=Binh@123;
     volumes:
       - ./Data:/app/Data
       - ./wwwroot:/app/wwwroot
@@ -17,7 +37,29 @@ services:
     restart: unless-stopped
     networks:
       - legal-network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:alpine
+    container_name: legal-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./wwwroot:/var/www/html:ro
+    restart: unless-stopped
+    networks:
+      - legal-network
+    depends_on:
+      - web
 
 networks:
   legal-network:
     driver: bridge
+
+volumes:
+  postgres-data:
